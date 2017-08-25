@@ -38,7 +38,6 @@ class QRCode(NormalBase):
         href = self.get_argument("href", None)
         if not href:
             self.write({
-                "code": 1,
                 "msg": "No Valid URL Found!"
             })
         else:

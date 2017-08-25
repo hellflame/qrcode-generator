@@ -1,4 +1,5 @@
 javascript:(function(){
+  /* 显示/隐藏二维码 */
   var qrcode = function (hs, src) {
     var ele = document.createElement('img'),
     target = document.getElementById(hs);
@@ -19,6 +20,7 @@ javascript:(function(){
       window.scrollTo(0, 0)
     }
   };
+  /* 二维码保存 */
   var store = function (id, src) {
     if(window.localStorage){
       var target = 'qrcode_' + id;
@@ -31,9 +33,9 @@ javascript:(function(){
       if(localStorage[target] && src === undefined){
         var index = freq.indexOf(id);
         if(index>0){
-          freq = [id].concat(freq.slice(0, index), freq.slice(index + 1))
+          freq = [id].concat(freq.slice(0, index), freq.slice(index + 1));
+          localStorage['freq'] = JSON.stringify(freq);
         }
-        localStorage['freq'] = JSON.stringify(freq);
         return localStorage[target]
       }else if(!localStorage[target] && src){
         if(freq.length<20){
@@ -48,12 +50,13 @@ javascript:(function(){
       }
     }
   };
+  /* 请求二维码 */
   var request = function (hs) {
     var a = new XMLHttpRequest();
     a.onreadystatechange = function () {
       if(a.readyState===4 && a.status===200){
         var data = JSON.parse(a.responseText);
-        if(data.code){
+        if(data.msg){
           alert(data.msg)
         }else{
           qrcode(hs, data.src);
@@ -62,22 +65,23 @@ javascript:(function(){
     }
     };
     a.open('GET','http://localhost:5000/qrcode/generator?href=' + encodeURIComponent(window.location.href));
-    /*
-    * 部署时切换服务
+    /* <-- 注释这一行和上一行
+    // 压缩使用时切换服务
     a.open('GET','https://static.hellflame.net/qrcode/generator?href=' + encodeURIComponent(window.location.href));
-    */
+    //*/
     a.send()
   };
-
+  /* 计算链接hash */
   function hash(str){
     var result = 0, tab = [0x1234, 0x2345, 0x3456, 0x4567, 0x5678, 0x789a, 0x89ab, 0x9abc, 0xabcd, 0xbcde, 0xcdef];
     for(var i=0;i<str.length;i++){
-    result = 33 * result +  str.charCodeAt(i) ^ (i > 0 ? str.charCodeAt(i-1): 66) + tab[i % tab.length];
+    result = 33 * result + str.charCodeAt(i) ^ (i > 0 ? str.charCodeAt(i-1): 66) + tab[i % tab.length];
     }
     return Math.abs(result).toString(16)
   }
 
-  var hs = hash(encodeURIComponent(location.href));
+  /* 开始 */
+  var hs = hash(encodeURIComponent(window.location.href));
   if(store(hs)){
     qrcode(hs, store(hs))
   }else{
@@ -85,4 +89,4 @@ javascript:(function(){
   }
 })();
 
-/*在浏览器书签中添加以上js，作为本地测试，默认服务地址为 http://localhost:5000/qrcode/generator */
+/* 在浏览器书签中添加以上js，作为本地测试，默认服务地址为 http://localhost:5000/qrcode/generator */
