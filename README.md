@@ -19,3 +19,5 @@
 * 由于关系到个人隐私，二维码生成最好使用自己信任的服务或自己独立部署，`qrcode.min.js` 中默认使用 `https://static.hellflame.net/qrcode/generator` 作为后端接口
 
 * 由于浏览器安全策略问题，`https` 网站默认会限制 `http` 内容的加载，所以后端最好加上 `https`
+
+* 关于这里用到的`hash`中移位截断的[说明](https://www.hellflame.net/article/louKs)
