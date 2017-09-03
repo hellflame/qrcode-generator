@@ -1,5 +1,2 @@
-# requirements.txt
-
-tornado
-qrcode
-
+qrcode==5.3
+tornado==4.4
