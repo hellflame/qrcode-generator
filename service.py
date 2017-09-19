@@ -7,22 +7,11 @@ import cStringIO
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-options.define('port', default=5000, help="Running port")
-options.define('address', default='127.0.0.1', help='Running address')
 
-
-class NormalBase(web.RequestHandler):
+class QRCode(web.RequestHandler):
     def set_default_headers(self):
         self.set_header('Server', 'Secret!')
 
-    def get(self, *args, **kwargs):
-        self.send_error(404)
-
-    def post(self, *args, **kwargs):
-        self.send_error(404)
-
-
-class QRCode(NormalBase):
     @gen.coroutine
     def generate_qrcode(self, href):
         qr_string = cStringIO.StringIO()
@@ -47,14 +36,13 @@ class QRCode(NormalBase):
             })
 
 
-routes = [(r"/qrcode/generator", QRCode)]
-app = web.Application(
-                      handlers=routes,
-                      autoreload=True,
-                      default_handler_class=NormalBase
-                      )
+app = web.Application(handlers=[(r"/qrcode/generator", QRCode)],
+                      autoreload=True)
+
 
 if __name__ == '__main__':
+    options.define('port', default=5000, help="Running port")
+    options.define('address', default='127.0.0.1', help='Running address')
     options.parse_command_line()
     app.listen(options.options.port, options.options.address)
     ioloop.IOLoop.current().start()
