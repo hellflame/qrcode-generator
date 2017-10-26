@@ -18,7 +18,8 @@ class QRCode(web.RequestHandler):
         img = qrcode.make(href)
         img.save(qr_string, 'png')
         src = "data:image/png;base64," + qr_string.getvalue().encode('base64').replace("\n", "")
-        raise gen.Return(src)
+        #raise gen.Return(src)
+        return src
 
     @gen.coroutine
     def get(self):
